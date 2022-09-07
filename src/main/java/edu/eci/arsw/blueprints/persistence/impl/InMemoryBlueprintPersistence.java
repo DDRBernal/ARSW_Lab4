@@ -10,6 +10,7 @@ import edu.eci.arsw.blueprints.model.Point;
 import edu.eci.arsw.blueprints.persistence.BlueprintNotFoundException;
 import edu.eci.arsw.blueprints.persistence.BlueprintPersistenceException;
 import edu.eci.arsw.blueprints.persistence.BlueprintsPersistence;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -22,9 +23,11 @@ import java.util.Set;
  * @author hcadavid
  */
 @Component
+@Qualifier
 public class InMemoryBlueprintPersistence implements BlueprintsPersistence{
 
     private final Map<Tuple<String,String>,Blueprint> blueprints=new HashMap<>();
+
 
     public InMemoryBlueprintPersistence() {
         //load stub data
@@ -45,11 +48,12 @@ public class InMemoryBlueprintPersistence implements BlueprintsPersistence{
     }
 
     @Override
-    public Blueprint getBlueprint(String author, String bprintname) throws BlueprintNotFoundException {
+    public Blueprint getBlueprint(String author, String bprintname) {
         return blueprints.get(new Tuple<>(author, bprintname));
     }
 
-    public Set<Blueprint> getAllBlueprints() throws BlueprintNotFoundException {
+    @Override
+    public Set<Blueprint> getAllBlueprints()  {
         Set<Blueprint> set = new HashSet<>();
         for (Tuple<String,String> tuple : blueprints.keySet()){
             Blueprint blueprint = getBlueprint(blueprints.get(tuple).getAuthor(), blueprints.get(tuple).getName());
@@ -59,12 +63,14 @@ public class InMemoryBlueprintPersistence implements BlueprintsPersistence{
     }
 
     @Override
-    public Set<Blueprint> getBlueprintsByAuthor(String author) throws BlueprintNotFoundException {
+    public Set<Blueprint> getBlueprintsByAuthor(String author) {
         Set<Blueprint> set = new HashSet<>();
         for (Tuple<String, String> tuple: blueprints.keySet()){
-            
+            if (blueprints.get(tuple).getAuthor().equals(author)){
+                Blueprint blueprint = getBlueprint(blueprints.get(tuple).getAuthor(), blueprints.get(tuple).getName());
+                set.add(blueprint);
+            }
         }
-        return null;
+        return set;
     }
-
 }

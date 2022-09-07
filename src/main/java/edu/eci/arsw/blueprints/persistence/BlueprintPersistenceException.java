@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  *
  * @author hcadavid
  */
-@Component
+
 public class BlueprintPersistenceException extends Exception{
 
     public BlueprintPersistenceException(String message) {
